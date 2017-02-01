@@ -41,3 +41,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'org.jetbrains.kotlin:kotlin-stdlib:1.0.4'
 }
+
+ant.importBuild 'assets.xml'
+preBuild.dependsOn(list, checksum)
+clean.dependsOn(clean_assets)

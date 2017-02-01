@@ -2,4 +2,8 @@
     <string name="app_name">Globalwave</string>
 
     <string name="voice_listening_title">Listening...</string>
+
+    <string name="speech_recognition_listening">Listening...</string>
+    <string name="speech_recognition_last_text">Last text:</string>
+
 </resources>
