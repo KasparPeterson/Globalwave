@@ -103,6 +103,7 @@ class SpeechRecognitionActivity : AppCompatActivity(), RecognitionListener {
     }
 
     private fun startListening() {
+        speechRecognizer!!.cancel()
         handler!!.postDelayed((Runnable {
             speechRecognizer!!.startListening(recognizerIntent)
         }), LISTENING_DELAY)
