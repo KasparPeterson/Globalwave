@@ -16,10 +16,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".SpeechRecognitionActivity"
-            android:screenOrientation="portrait">
-        </activity>
-
-        <activity android:name=".SpotifyActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleInstance">
             <intent-filter>
@@ -31,7 +27,6 @@
             <data
                 android:host="spotifylogin"
                 android:scheme="kaspar"/>
-
         </activity>
 
         <!-- Needed for Spotify LoginActivity to work -->

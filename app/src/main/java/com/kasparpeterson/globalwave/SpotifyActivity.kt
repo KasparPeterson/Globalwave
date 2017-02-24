@@ -12,7 +12,7 @@ import com.spotify.sdk.android.player.*
 /**
  * Created by kaspar on 04/02/2017.
  */
-class SpotifyActivity: AppCompatActivity(), Player.NotificationCallback, ConnectionStateCallback {
+abstract class SpotifyActivity: AppCompatActivity(), Player.NotificationCallback, ConnectionStateCallback {
 
     private val TAG = SpotifyActivity::class.java.simpleName
 
@@ -22,6 +22,8 @@ class SpotifyActivity: AppCompatActivity(), Player.NotificationCallback, Connect
     private val REDIRECT_URI = "kaspar://spotifylogin"
 
     private var player: Player? = null
+
+    abstract fun onSpotifyInitialised()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +50,7 @@ class SpotifyActivity: AppCompatActivity(), Player.NotificationCallback, Connect
         player!!.addNotificationCallback(this@SpotifyActivity)
     }
 
-    private fun play(artist: String, song: String) {
+    protected fun play(artist: String, song: String) {
         player!!.playUri(object : Player.OperationCallback {
             override fun onSuccess() {
                 Log.e(TAG, "playUri onSuccess()")
@@ -64,8 +66,15 @@ class SpotifyActivity: AppCompatActivity(), Player.NotificationCallback, Connect
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        Log.e(TAG, "onActivityResult, requestCode: " + requestCode + ", resultCode: " + resultCode)
+
         if (requestCode == REQUEST_CODE) {
             val response = AuthenticationClient.getResponse(resultCode, data)
+
+            Log.e(TAG, "response: " + response +
+                    "\nerror: " + response.error +
+                    "\ntoken: " + response.accessToken)
+
             if (response.type == AuthenticationResponse.Type.TOKEN) {
                 val playerConfig = Config(this, response.accessToken, CLIENT_ID)
                 Spotify.getPlayer(playerConfig, this, object : SpotifyPlayer.InitializationObserver {
@@ -106,7 +115,7 @@ class SpotifyActivity: AppCompatActivity(), Player.NotificationCallback, Connect
 
     override fun onLoggedIn() {
         Log.e(TAG, "onLoggedIn()")
-        play("TODO:", "TODO")
+        onSpotifyInitialised()
     }
 
     override fun onTemporaryError() {

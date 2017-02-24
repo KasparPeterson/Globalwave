@@ -6,14 +6,13 @@ import android.os.Handler
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.TextView
 
 /**
  * Created by kaspar on 31/01/2017.
  */
-class SpeechRecognitionActivity : AppCompatActivity(), RecognitionListener {
+class SpeechRecognitionActivity : SpotifyActivity(), RecognitionListener {
 
     val TAG = SpeechRecognitionActivity::class.java.simpleName
 
@@ -37,7 +36,9 @@ class SpeechRecognitionActivity : AppCompatActivity(), RecognitionListener {
 
         resultTextView = findViewById(R.id.speech_recognition_result_text_view) as TextView
         lastTextTextView = findViewById(R.id.speech_recognition_last_text_text_view) as TextView
+    }
 
+    override fun onSpotifyInitialised() {
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
         speechRecognizer!!.setRecognitionListener(this)
 
@@ -98,6 +99,8 @@ class SpeechRecognitionActivity : AppCompatActivity(), RecognitionListener {
             Log.e(TAG, "Result: " + text)
             resultTextView?.text = matches[0]
             lastText = matches[0]
+
+            parseSpeech(matches[0])
         }
         startListening()
     }
@@ -107,6 +110,14 @@ class SpeechRecognitionActivity : AppCompatActivity(), RecognitionListener {
         handler!!.postDelayed((Runnable {
             speechRecognizer!!.startListening(recognizerIntent)
         }), LISTENING_DELAY)
+    }
+
+    private fun parseSpeech(result: String) {
+        Log.e(TAG, result)
+        if (result.toLowerCase().equals("play boards of canada")) {
+            Log.e(TAG, "Playing Boards of Canada")
+            play("Boards of Canada", "")
+        }
     }
 
 }
