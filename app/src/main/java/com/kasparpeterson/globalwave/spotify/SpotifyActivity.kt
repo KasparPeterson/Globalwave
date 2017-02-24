@@ -1,4 +1,4 @@
-package com.kasparpeterson.globalwave
+package com.kasparpeterson.globalwave.spotify
 
 import android.content.Intent
 import android.os.Bundle
@@ -50,7 +50,7 @@ abstract class SpotifyActivity: AppCompatActivity(), Player.NotificationCallback
         player!!.addNotificationCallback(this@SpotifyActivity)
     }
 
-    protected fun play(artist: String, song: String) {
+    protected fun play(uri: String) {
         player!!.playUri(object : Player.OperationCallback {
             override fun onSuccess() {
                 Log.e(TAG, "playUri onSuccess()")
@@ -60,7 +60,7 @@ abstract class SpotifyActivity: AppCompatActivity(), Player.NotificationCallback
                 Log.e(TAG, "playUri onError()")
             }
 
-        }, "spotify:track:3vBJYnujT3yxLjLEG1jtDS", 0, 0)
+        }, uri, 0, 0)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

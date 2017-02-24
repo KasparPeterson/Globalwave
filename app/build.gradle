@@ -56,6 +56,20 @@ dependencies {
 
     // This library handles music playback
     compile 'com.spotify.sdk:spotify-player:2.20b@aar'
+
+    //Retrofit
+    compile 'com.squareup.retrofit2:retrofit:2.2.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.2.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
+
+    //RxAndroid
+    compile 'io.reactivex:rxandroid:1.1.0'
+    compile 'io.reactivex:rxjava:1.1.0'
+
+    compile 'com.jakewharton.rxbinding:rxbinding:0.3.0'
+
+    //Gson
+    compile 'com.google.code.gson:gson:2.8.0'
 }
 
 ant.importBuild 'assets.xml'

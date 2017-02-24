@@ -8,6 +8,14 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.util.Log
 import android.widget.TextView
+import com.google.gson.Gson
+import com.kasparpeterson.globalwave.spotify.SpotifyActivity
+import com.kasparpeterson.globalwave.spotify.search.model.Item
+import com.kasparpeterson.globalwave.spotify.search.model.SearchResult
+import com.kasparpeterson.globalwave.spotify.search.SpotifySearchManager
+import rx.Observer
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 
 /**
  * Created by kaspar on 31/01/2017.
@@ -28,6 +36,8 @@ class SpeechRecognitionActivity : SpotifyActivity(), RecognitionListener {
     var resultTextView: TextView? = null
     var lastTextTextView: TextView? = null
 
+    var spotifySearchManager: SpotifySearchManager? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_speech_recognition)
@@ -36,6 +46,8 @@ class SpeechRecognitionActivity : SpotifyActivity(), RecognitionListener {
 
         resultTextView = findViewById(R.id.speech_recognition_result_text_view) as TextView
         lastTextTextView = findViewById(R.id.speech_recognition_last_text_text_view) as TextView
+
+        spotifySearchManager = SpotifySearchManager()
     }
 
     override fun onSpotifyInitialised() {
@@ -113,11 +125,46 @@ class SpeechRecognitionActivity : SpotifyActivity(), RecognitionListener {
     }
 
     private fun parseSpeech(result: String) {
-        Log.e(TAG, result)
-        if (result.toLowerCase().equals("play boards of canada")) {
-            Log.e(TAG, "Playing Boards of Canada")
-            play("Boards of Canada", "")
+        Log.e(TAG, "parseSpeech: " + result)
+        if (spotifySearchManager != null) {
+            spotifySearchManager!!.search(result)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .map({ searchResult -> getBestMatch(searchResult) })
+                    .subscribe(object : Observer<Item?> {
+                        override fun onCompleted() {
+                            Log.e(TAG, "onCompleted")
+                        }
+
+                        override fun onNext(item: Item?) {
+                            Log.e(TAG, "onNext, item: " + Gson().toJson(item))
+                            if (item != null && item.uri != null) {
+                                play(item.uri!!)
+                            }
+                        }
+
+                        override fun onError(e: Throwable?) {
+                            Log.e(TAG, "onError", e)
+                        }
+
+                    })
         }
+    }
+
+    private fun getBestMatch(result: SearchResult): Item? {
+        var mostPopularInt = 0
+        var mostPopularItem: Item? = null
+
+        if (result.artists != null && result.artists!!.items != null) {
+            for (item in result.artists!!.items!!) {
+                if (item.popularity != null && item.popularity!! > mostPopularInt) {
+                    mostPopularInt = item.popularity!!
+                    mostPopularItem = item
+                }
+            }
+        }
+
+        return mostPopularItem
     }
 
 }
