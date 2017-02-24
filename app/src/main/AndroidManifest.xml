@@ -2,6 +2,8 @@
 <manifest package="com.kasparpeterson.globalwave"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <!-- Pocket Sphinx -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -15,12 +17,28 @@
         android:theme="@style/AppTheme">
         <activity android:name=".SpeechRecognitionActivity"
             android:screenOrientation="portrait">
+        </activity>
+
+        <activity android:name=".SpotifyActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
+            <data
+                android:host="spotifylogin"
+                android:scheme="kaspar"/>
+
         </activity>
+
+        <!-- Needed for Spotify LoginActivity to work -->
+        <activity
+            android:name="com.spotify.sdk.android.authentication.LoginActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+
     </application>
 
 </manifest>
