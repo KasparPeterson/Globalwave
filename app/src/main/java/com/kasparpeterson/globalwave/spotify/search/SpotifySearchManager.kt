@@ -29,7 +29,11 @@ class SpotifySearchManager {
 
     fun search(searchTerm: String): Observable<SearchResult> {
         Log.e(TAG, "search, searchTerm: " + searchTerm)
-        return service.search(searchTerm, "artist")
+        if (searchTerm != null && searchTerm.length > 1) {
+            return service.search(searchTerm.substring(1, searchTerm.length), searchTerm.substring(0, 1))
+        } else {
+            return Observable.error(Exception("Search term is too short"))
+        }
     }
 
 }
