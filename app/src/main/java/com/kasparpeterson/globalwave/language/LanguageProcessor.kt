@@ -10,7 +10,7 @@ class LanguageProcessor {
         val words = getSearchWords(search)
         val searchType = getSearchType(words)
         val wordsWithoutType = getWordsWithoutType(words, searchType)
-        val name = getNameIfNotEmpty(wordsWithoutType)
+        val name = getName(wordsWithoutType)
         return ProcessorResult(searchType, name)
     }
 
@@ -32,12 +32,6 @@ class LanguageProcessor {
         if (searchType != ProcessorResult.SearchType.UNKNOWN)
             return words.subList(1, words.size)
         return words
-    }
-
-    private fun getNameIfNotEmpty(words: List<String>): String {
-        if (words.isNotEmpty())
-            return getName(words)
-        return ""
     }
 
     private fun getName(words: List<String>): String {
