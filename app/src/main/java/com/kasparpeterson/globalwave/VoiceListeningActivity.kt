@@ -9,6 +9,7 @@ import java.io.File
 /**
  * Created by kaspar on 27/01/2017.
  */
+@Deprecated("This is just a test class to see PocketSphinx capabilities")
 class VoiceListeningActivity: AppCompatActivity(), RecognitionListener {
 
     private val TAG = VoiceListeningActivity::class.java.simpleName
@@ -23,29 +24,33 @@ class VoiceListeningActivity: AppCompatActivity(), RecognitionListener {
         setContentView(R.layout.activity_voice_listening)
         val assets = Assets(this)
         val assetDir = assets.syncAssets()
-        setupRecognizer(assetDir)
+        speechRecognizer = getRecognizer(assetDir)
     }
 
-    private fun setupRecognizer(assetsDir: File) {
-        // TODO: put recognizer setup to background thread
-        speechRecognizer = SpeechRecognizerSetup.defaultSetup()
+    private fun getRecognizer(assetsDir: File): SpeechRecognizer {
+        val speechRecognizer = getDefaultRecognizer(assetsDir)
+        speechRecognizer.addListener(this)
+        speechRecognizer.addKeyphraseSearch(KWS_SEARCH, KEYPHRASE)
+        speechRecognizer.addAllphoneSearch(PHONE_SEARCH, getPhoneticModel(assetsDir))
+        speechRecognizer.startListening(KWS_SEARCH)
+        return speechRecognizer
+    }
+
+    private fun getDefaultRecognizer(assetsDir: File): SpeechRecognizer {
+        return SpeechRecognizerSetup.defaultSetup()
                 .setAcousticModel(File(assetsDir, "en-us-ptm"))
                 .setDictionary(File(assetsDir, "cmudict-en-us.dict"))
                 .setRawLogDir(assetsDir).setKeywordThreshold(1e-20f)
                 .recognizer
-        speechRecognizer!!.addListener(this)
+    }
 
-        speechRecognizer!!.addKeyphraseSearch(KWS_SEARCH, KEYPHRASE)
-
-        val phoneticModel = File(assetsDir, "en-phone.dmp")
-        speechRecognizer!!.addAllphoneSearch(PHONE_SEARCH, phoneticModel)
-
-        speechRecognizer!!.startListening(KWS_SEARCH)
+    private fun getPhoneticModel(assetsDir: File): File {
+        return File(assetsDir, "en-phone.dmp")
     }
 
     // Pocket Sphinx functions
     override fun onPartialResult(p0: Hypothesis?) {
-        Log.e(TAG, "onPartialResult, hypstr: " + p0?.hypstr)
+        Log.d(TAG, "onPartialResult, hypstr: " + p0?.hypstr)
         val result = p0?.hypstr
         if (result.equals(KEYPHRASE)) {
             speechRecognizer!!.startListening(PHONE_SEARCH, 100000)
@@ -53,23 +58,22 @@ class VoiceListeningActivity: AppCompatActivity(), RecognitionListener {
     }
 
     override fun onTimeout() {
-        Log.e(TAG, "onTimeout")
+        Log.d(TAG, "onTimeout")
     }
 
     override fun onEndOfSpeech() {
-        Log.e(TAG, "onEndOfSpeech")
+        Log.d(TAG, "onEndOfSpeech")
     }
 
     override fun onResult(p0: Hypothesis?) {
-        Log.e(TAG, "onResult, hypst: " + p0?.hypstr)
+        Log.d(TAG, "onResult, hypst: " + p0?.hypstr)
     }
 
     override fun onBeginningOfSpeech() {
-        Log.e(TAG, "onBeginningOfSpeech")
+        Log.d(TAG, "onBeginningOfSpeech")
     }
 
     override fun onError(p0: Exception?) {
-        Log.e(TAG, "onError")
+        Log.d(TAG, "onError")
     }
-
 }

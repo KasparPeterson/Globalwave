@@ -12,7 +12,6 @@ interface SpotifyService {
 
     @GET("search")
     fun search(@Query("q") searchTerm: String,
-               @Query("type") type: String)
-            : Observable<SearchResult>
+               @Query("type") type: String): Observable<SearchResult>
 
 }

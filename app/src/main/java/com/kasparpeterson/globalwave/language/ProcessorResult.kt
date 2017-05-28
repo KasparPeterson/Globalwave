@@ -5,11 +5,20 @@ package com.kasparpeterson.globalwave.language
  */
 class ProcessorResult(val searchType: SearchType, val name: String) {
 
-    enum class SearchType(type: String) {
+    enum class SearchType(val type: String) {
         TRACK("track"),
         ALBUM("album"),
-        ARTIST("album"),
+        ARTIST("artist"),
         UNKNOWN("unknown");
-    }
 
+        companion object {
+            fun getSearchType(type: String): SearchType {
+                if (type.toLowerCase() == "song") return TRACK
+
+                return SearchType.values().firstOrNull {
+                    type.toLowerCase() == it.type
+                } ?: UNKNOWN
+            }
+        }
+    }
 }

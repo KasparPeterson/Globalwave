@@ -1,4 +1,4 @@
-package com.kasparpeterson.globalwave
+package com.kasparpeterson.globalwave.recognition
 
 import android.speech.SpeechRecognizer
 
